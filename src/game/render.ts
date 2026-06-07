@@ -199,12 +199,31 @@ function drawEntities(args: { ctx: CanvasRenderingContext2D; runtime: GameRuntim
 
   for (const p of runtime.projectiles) {
     if (p.kind === "mortar") {
+      const origin = p.origin ?? p.pos
+      const impactPos = p.impactPos ?? p.pos
+      const ttlMax = p.ttlMax ?? 0.66
+      const t = ttlMax > 1e-6 ? Math.max(0, Math.min(1, 1 - p.ttl / ttlMax)) : 1
+      const x = origin.x + (impactPos.x - origin.x) * t
+      const y = origin.y + (impactPos.y - origin.y) * t
+      const h = Math.sin(Math.PI * t) * tileSize * 0.85
       ctx.save()
-      ctx.globalAlpha = 0.85
-      ctx.fillStyle = "rgba(242,229,190,0.85)"
+      ctx.globalAlpha = 0.38
+      ctx.fillStyle = "rgba(0,0,0,0.55)"
       ctx.beginPath()
-      ctx.arc(p.pos.x, p.pos.y, 4.0, 0, Math.PI * 2)
+      ctx.arc(x, y, 4.2, 0, Math.PI * 2)
       ctx.fill()
+
+      ctx.globalAlpha = 0.9
+      ctx.fillStyle = "rgba(242,229,190,0.92)"
+      ctx.beginPath()
+      ctx.arc(x, y - h, 3.2, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.strokeStyle = "rgba(255,206,124,0.55)"
+      ctx.lineWidth = 1.2
+      ctx.beginPath()
+      ctx.moveTo(x, y - h)
+      ctx.lineTo(x, y - Math.max(0, h * 0.6))
+      ctx.stroke()
       ctx.restore()
       continue
     }

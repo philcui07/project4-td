@@ -80,6 +80,9 @@ export interface Projectile {
   vel: Vec2
   targetId?: string
   ttl: number
+  ttlMax?: number
+  origin?: Vec2
+  impactPos?: Vec2
   impactRadius?: number
   impactDamage?: number
   impactArmorMultiplier?: Record<ArmorKind, number>

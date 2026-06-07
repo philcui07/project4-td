@@ -226,12 +226,19 @@ function tryFireTower(args: { runtime: GameRuntime; tower: Tower; tileSize: numb
 
   if (tower.kind === "mortar") {
     const dmg = stats.damage
+    const flight = 0.66
+    const impactPos = { ...target.pos }
+    const origin = towerPos
+    const vel = mul(sub(impactPos, origin), 1 / Math.max(1e-6, flight))
     return {
       id: uid("p"),
       kind: tower.kind,
-      pos: { ...target.pos },
-      vel: { x: 0, y: 0 },
-      ttl: 0.66,
+      pos: origin,
+      vel,
+      ttl: flight,
+      ttlMax: flight,
+      origin,
+      impactPos,
       impactRadius: (stats.splashRadiusTiles ?? 1) * tileSize,
       impactDamage: dmg,
       impactArmorMultiplier: spec.armorMultiplier,
@@ -254,7 +261,10 @@ function tryFireTower(args: { runtime: GameRuntime; tower: Tower; tileSize: numb
 
 function tickProjectile(args: { runtime: GameRuntime; projectile: Projectile; difficulty: Difficulty; levelIndex: number; waveIndex: number; dt: number }) {
   const { runtime, projectile, difficulty, levelIndex, waveIndex, dt } = args
-  const p = { ...projectile, ttl: projectile.ttl - dt, pos: add(projectile.pos, mul(projectile.vel, dt)) }
+  let p = { ...projectile, ttl: projectile.ttl - dt, pos: add(projectile.pos, mul(projectile.vel, dt)) }
+  if (p.kind === "mortar" && p.ttl <= 0 && p.impactPos) {
+    p = { ...p, pos: p.impactPos }
+  }
   if (p.ttl <= 0) {
     if (p.kind === "mortar") {
       return resolveMortar({ runtime, projectile: p, difficulty, levelIndex, waveIndex })

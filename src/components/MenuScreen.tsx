@@ -31,12 +31,12 @@ export default function MenuScreen() {
       <div className="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-black/25 p-8 shadow-[0_18px_60px_rgba(0,0,0,0.55)]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(242,229,190,0.12),transparent_55%),radial-gradient(circle_at_90%_20%,rgba(255,206,124,0.12),transparent_55%),radial-gradient(circle_at_60%_120%,rgba(139,49,40,0.14),transparent_55%)]" />
         <div className="relative">
-          <div className="text-xs uppercase tracking-[0.38em] text-[color:var(--paper)]/70">Field Manual TD / 5×5</div>
+          <div className="text-xs uppercase tracking-[0.38em] text-[color:var(--paper)]/70">Field Manual TD / V2.0</div>
           <h1 className="mt-2 text-balance font-display text-4xl text-[color:var(--paper)] md:text-5xl">
-            铁幕前线：小地图塔防
+            铁幕前线：小地图塔防 V2.0
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--paper)]/80">
-            在 5×5 战场上布置机枪、反坦克炮与迫击炮，抵御一波波敌军沿道路突破。每一发弹药都来自你的补给与判断。
+            在小地图战场上布置机枪、反坦克炮与迫击炮，抵御一波波敌军沿道路突破。每一发弹药都来自你的补给与判断。
           </p>
         </div>
       </div>
@@ -82,4 +82,3 @@ export default function MenuScreen() {
     </div>
   )
 }
-

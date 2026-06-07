@@ -318,6 +318,7 @@ export function getMap(levelIndex: number): MapSpec {
 
 export function getEnemySpec(kind: EnemyKind, difficulty: Difficulty, levelIndex: number, waveIndex: number): EnemySpec {
   const base = enemiesBase[kind]
+  const kindSpeedMul = kind === "car" ? 0.9 : 1
   // 全局调整（按需求）：移速 +20%；防御（这里按血量 maxHp 体现）整体提升；
   // Boss 单独按“变为 2 倍”处理（不与 1.5 叠乘）。
   const globalHpMul = kind === "boss" ? 2 : 1.5
@@ -334,7 +335,7 @@ export function getEnemySpec(kind: EnemyKind, difficulty: Difficulty, levelIndex
   return {
     ...base,
     maxHp: Math.round(base.maxHp * globalHpMul * hpMul * levelMul * waveMul),
-    speedTilesPerSec: base.speedTilesPerSec * globalSpeedMul * speedMul,
+    speedTilesPerSec: base.speedTilesPerSec * kindSpeedMul * globalSpeedMul * speedMul,
     reward: Math.round(base.reward * rewardMul * (0.92 + levelMul * 0.1 + waveMul * 0.08)),
   }
 }
