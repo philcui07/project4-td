@@ -336,6 +336,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       levelIndex: nextLevel,
       waveIndex: 0,
       waveState: "build",
+      supply: getStartSupply(s.difficulty),
       buildKind: null,
       selectedTile: null,
       selectedTowerId: null,

@@ -318,21 +318,31 @@ export function getMap(levelIndex: number): MapSpec {
 
 export function getEnemySpec(kind: EnemyKind, difficulty: Difficulty, levelIndex: number, waveIndex: number): EnemySpec {
   const base = enemiesBase[kind]
-  const hpMul = difficulty === "easy" ? 0.9 : difficulty === "veteran" ? 1.25 : 1
-  const speedMul = difficulty === "easy" ? 0.95 : difficulty === "veteran" ? 1.05 : 1
-  const rewardMul = difficulty === "easy" ? 0.95 : difficulty === "veteran" ? 1.1 : 1
+  // 全局调整（按需求）：移速 +20%；防御（这里按血量 maxHp 体现）整体提升；
+  // Boss 单独按“变为 2 倍”处理（不与 1.5 叠乘）。
+  const globalHpMul = kind === "boss" ? 2 : 1.5
+  const globalSpeedMul = 1.2
+
+  // 难度系数
+  // 老兵模式：只提升敌人 HP（不额外改变移速/奖励）。
+  const veteranHardMul = difficulty === "veteran" ? 2 : 1
+  const hpMul = (difficulty === "easy" ? 0.9 : difficulty === "veteran" ? 1.25 : 1) * veteranHardMul
+  const speedMul = difficulty === "easy" ? 0.95 : 1
+  const rewardMul = difficulty === "easy" ? 0.95 : 1
   const levelMul = 1 + Math.max(0, Math.min(LEVEL_COUNT - 1, levelIndex)) * 0.12
   const waveMul = 1 + Math.max(0, Math.min(WAVES_PER_LEVEL - 1, waveIndex)) * 0.05
   return {
     ...base,
-    maxHp: Math.round(base.maxHp * hpMul * levelMul * waveMul),
-    speedTilesPerSec: base.speedTilesPerSec * speedMul,
+    maxHp: Math.round(base.maxHp * globalHpMul * hpMul * levelMul * waveMul),
+    speedTilesPerSec: base.speedTilesPerSec * globalSpeedMul * speedMul,
     reward: Math.round(base.reward * rewardMul * (0.92 + levelMul * 0.1 + waveMul * 0.08)),
   }
 }
 
 export function getStartSupply(difficulty: Difficulty) {
-  return difficulty === "easy" ? 95 : difficulty === "veteran" ? 80 : 88
+  void difficulty
+  // 每关开局固定 100，不随难度变化，也不继承上一关。
+  return 100
 }
 
 export function getStartBaseHp(difficulty: Difficulty) {
@@ -340,7 +350,9 @@ export function getStartBaseHp(difficulty: Difficulty) {
 }
 
 export function getWaves(difficulty: Difficulty, levelIndex: number): WaveSpec[] {
+  // 老兵模式：只提升敌人数量（不额外改变生成间隔）。
   const density = difficulty === "easy" ? 0.9 : difficulty === "veteran" ? 1.12 : 1
+  const countMul = difficulty === "veteran" ? 2 : 1
   const clamp = (n: number) => Math.max(0.32, n)
   const levelStage = 1 + Math.max(0, Math.min(LEVEL_COUNT - 1, levelIndex)) * 0.16
 
@@ -360,7 +372,7 @@ export function getWaves(difficulty: Difficulty, levelIndex: number): WaveSpec[]
     return {
       entries: w.entries.map((e) => ({
         ...e,
-        count: e.kind === "boss" ? 1 : Math.round(e.count * density * levelStage * waveStage),
+        count: e.kind === "boss" ? 1 : Math.round(e.count * density * levelStage * waveStage * countMul),
         interval: clamp(e.interval / (density * (0.95 + levelIndex * 0.03 + idx * 0.06))),
       })),
     }
