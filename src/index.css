@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #f2e5be;
+  --brass: #ffce7c;
+  --red: #8b3128;
+  --line: rgba(242, 229, 190, 0.18);
+  --ink: rgba(0, 0, 0, 0.72);
+
+  font-family: "IBM Plex Sans", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: #0b0e0a;
+}
+
+@layer utilities {
+  .bg-app {
+    background: radial-gradient(1000px 580px at 18% 8%, rgba(255, 206, 124, 0.12), transparent 55%),
+      radial-gradient(860px 520px at 90% 30%, rgba(139, 49, 40, 0.16), transparent 60%),
+      radial-gradient(900px 640px at 55% 120%, rgba(58, 72, 44, 0.22), transparent 62%),
+      linear-gradient(180deg, #0b0e0a 0%, #0e120d 60%, #0a0d09 100%);
+  }
+
+  .bg-appTexture {
+    background-image: radial-gradient(circle at 10% 12%, rgba(242, 229, 190, 0.06), transparent 52%),
+      radial-gradient(circle at 80% 20%, rgba(255, 206, 124, 0.05), transparent 56%),
+      radial-gradient(circle at 55% 85%, rgba(139, 49, 40, 0.06), transparent 58%),
+      repeating-linear-gradient(90deg, rgba(242, 229, 190, 0.035) 0px, rgba(242, 229, 190, 0.035) 1px, transparent 1px, transparent 6px),
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0px, rgba(0, 0, 0, 0.2) 1px, transparent 1px, transparent 8px);
+    mix-blend-mode: overlay;
+    opacity: 0.75;
+  }
+}
