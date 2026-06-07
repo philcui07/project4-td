@@ -1,5 +1,4 @@
 import BattlefieldCanvas from "@/components/BattlefieldCanvas"
-import Button from "@/components/ui/Button"
 import { LEVEL_COUNT, WAVES_PER_LEVEL, getTowerSpec } from "@/game/specs"
 import { getTowerSprite } from "@/game/sprites"
 import type { TowerKind } from "@/game/types"
@@ -66,79 +65,73 @@ export default function GameScreen() {
 
   return (
     <div className="mx-auto flex h-full w-full max-w-[1220px] flex-col gap-2 px-2 py-2 sm:gap-3 sm:px-3 sm:py-3 lg:px-4 lg:py-4">
-      <div className="shrink-0 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[color:var(--line)] bg-black/20 px-2 py-2 shadow-[0_18px_60px_rgba(0,0,0,0.45)] sm:px-3 lg:px-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center gap-2 rounded-xl bg-black/25 px-3 py-2 ring-1 ring-[color:var(--line)]">
-            <div className="text-sm text-[color:var(--paper)]">
-              <span className="hidden sm:inline">
-                第 <span className="font-semibold">{levelIndex + 1}</span> 关 / {LEVEL_COUNT} · 第{" "}
-                <span className="font-semibold">{Math.min(totalWaves, waveIndex + 1)}</span> 波 / {totalWaves}
-              </span>
-              <span className="sm:hidden">
-                {levelIndex + 1}/{LEVEL_COUNT} · {Math.min(totalWaves, waveIndex + 1)}/{totalWaves}
-              </span>
+      <div className="shrink-0 flex flex-nowrap items-center justify-between gap-1 rounded-2xl border border-[color:var(--line)] bg-black/20 px-1.5 py-1.5 shadow-[0_18px_60px_rgba(0,0,0,0.45)] sm:gap-2 sm:px-3 sm:py-2 lg:px-4">
+        <div className="flex min-w-0 flex-nowrap items-center gap-1 sm:gap-2">
+          <div className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-black/25 px-2 py-1.5 ring-1 ring-[color:var(--line)]">
+            <div className="text-[10px] leading-none text-[color:var(--paper)] sm:text-sm">
+              L{levelIndex + 1}/{LEVEL_COUNT} W{Math.min(totalWaves, waveIndex + 1)}/{totalWaves}
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-xl bg-black/25 px-3 py-2 ring-1 ring-[color:var(--line)]">
-            <BadgeDollarSign className="h-4 w-4 text-[color:var(--brass)]" />
-            <div className="text-sm text-[color:var(--paper)]">
-              <span className="font-semibold text-[color:var(--brass)]">{supply}</span>
-            </div>
+          <div className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-black/25 px-2 py-1.5 ring-1 ring-[color:var(--line)]">
+            <BadgeDollarSign className="h-3.5 w-3.5 text-[color:var(--brass)] sm:h-4 sm:w-4" />
+            <div className="text-[10px] font-semibold leading-none text-[color:var(--brass)] sm:text-sm">{supply}</div>
           </div>
-          {(["mg", "at", "mortar"] as TowerKind[]).map((kind) => {
-            const spec = getTowerSpec(kind)
-            const active = buildKind === kind
-            const sprite = getTowerSprite(kind)
-            return (
+
+          <div className="flex flex-nowrap items-center gap-1 sm:gap-2">
+            {(["mg", "at", "mortar"] as TowerKind[]).map((kind) => {
+              const spec = getTowerSpec(kind)
+              const active = buildKind === kind
+              const sprite = getTowerSprite(kind)
+              return (
+                <button
+                  key={kind}
+                  type="button"
+                  onClick={() => setBuildKind(active ? null : kind)}
+                  disabled={!buildEnabled}
+                  className={[
+                    "relative inline-flex h-9 w-9 items-center justify-center rounded-xl border bg-black/20 transition disabled:opacity-50 sm:h-10 sm:w-10",
+                    active ? "border-[color:var(--brass)] bg-black/35" : "border-[color:var(--line)] hover:bg-black/28",
+                  ].join(" ")}
+                >
+                  <img src={sprite.src} alt={spec.name} className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <div className="absolute -right-1 -top-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-[color:var(--paper)] ring-1 ring-[color:var(--line)]">
+                    {spec.cost}
+                  </div>
+                </button>
+              )
+            })}
+
+            {buildKind ? (
               <button
-                key={kind}
                 type="button"
-                onClick={() => setBuildKind(active ? null : kind)}
-                disabled={!buildEnabled}
-                className={[
-                  "inline-flex h-10 items-center gap-2 rounded-xl border px-2 transition disabled:opacity-50",
-                  active ? "border-[color:var(--brass)] bg-black/35" : "border-[color:var(--line)] bg-black/20 hover:bg-black/28",
-                ].join(" ")}
+                onClick={() => setBuildKind(null)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-black/20 ring-1 ring-[color:var(--line)] hover:bg-black/28 sm:h-10 sm:w-10"
               >
-                <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-black/25 ring-1 ring-[color:var(--line)]">
-                  <img src={sprite.src} alt={spec.name} className="h-5 w-5" />
-                </div>
-                <div className="hidden min-w-0 sm:block">
-                  <div className="truncate text-xs font-semibold text-[color:var(--paper)]">{spec.name}</div>
-                </div>
-                <div className="rounded-md bg-[color:var(--paper)]/10 px-2 py-1 text-xs text-[color:var(--paper)]/80">{spec.cost}</div>
+                <X className="h-4 w-4 text-[color:var(--paper)]" />
               </button>
-            )
-          })}
-
-          {buildKind ? (
-            <button
-              type="button"
-              onClick={() => setBuildKind(null)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 ring-1 ring-[color:var(--line)] hover:bg-black/28"
-            >
-              <X className="h-4 w-4 text-[color:var(--paper)]" />
-            </button>
-          ) : null}
+            ) : null}
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 flex-nowrap items-center gap-1 sm:gap-2">
           {selectedTower && selectedActions ? (
             <>
               <button
                 type="button"
                 onClick={upgradeSelected}
                 disabled={!selectedActions.canUpgrade || selectedActions.atMax}
-                className="inline-flex h-10 items-center gap-2 rounded-xl bg-black/20 px-3 text-xs text-[color:var(--paper)] ring-1 ring-[color:var(--line)] disabled:opacity-50"
+                className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl bg-black/20 text-[color:var(--paper)] ring-1 ring-[color:var(--line)] disabled:opacity-50 sm:h-10 sm:w-10"
               >
                 <ArrowUp className="h-4 w-4 text-[color:var(--brass)]" />
-                <span>{selectedActions.nextCost ?? "MAX"}</span>
+                <div className="absolute -right-1 -top-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-[color:var(--paper)] ring-1 ring-[color:var(--line)]">
+                  {selectedActions.nextCost ?? "MAX"}
+                </div>
               </button>
               <button
                 type="button"
                 onClick={sellSelected}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--red)] text-[color:var(--paper)] shadow-[0_6px_0_rgba(0,0,0,0.35)]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[color:var(--red)] text-[color:var(--paper)] shadow-[0_6px_0_rgba(0,0,0,0.35)] sm:h-10 sm:w-10"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -149,7 +142,7 @@ export default function GameScreen() {
             <button
               type="button"
               onClick={nextWave}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--brass)] text-black shadow-[0_6px_0_rgba(0,0,0,0.35)]"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[color:var(--brass)] text-black shadow-[0_6px_0_rgba(0,0,0,0.35)] sm:h-10 sm:w-10"
             >
               <Play className="h-4 w-4" />
             </button>
@@ -158,7 +151,7 @@ export default function GameScreen() {
             <button
               type="button"
               onClick={togglePause}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 text-[color:var(--paper)] ring-1 ring-[color:var(--line)] hover:bg-black/28"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-black/20 text-[color:var(--paper)] ring-1 ring-[color:var(--line)] hover:bg-black/28 sm:h-10 sm:w-10"
             >
               {waveState === "paused" ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
             </button>
@@ -167,7 +160,7 @@ export default function GameScreen() {
             type="button"
             onClick={() => setSpeed(speed === 1 ? 2 : 1)}
             disabled={difficulty === "veteran"}
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-black/20 px-3 text-xs text-[color:var(--paper)] ring-1 ring-[color:var(--line)] disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-1 rounded-xl bg-black/20 px-2 text-[10px] font-semibold leading-none text-[color:var(--paper)] ring-1 ring-[color:var(--line)] disabled:opacity-50 sm:h-10 sm:gap-2 sm:px-3 sm:text-xs"
           >
             <Gauge className="h-4 w-4" />
             <span>{speed}×</span>
@@ -175,7 +168,7 @@ export default function GameScreen() {
           <button
             type="button"
             onClick={returnToMenu}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 text-[color:var(--paper)] ring-1 ring-[color:var(--line)] hover:bg-black/28"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-black/20 text-[color:var(--paper)] ring-1 ring-[color:var(--line)] hover:bg-black/28 sm:h-10 sm:w-10"
           >
             <Undo2 className="h-4 w-4" />
           </button>

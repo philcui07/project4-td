@@ -1,6 +1,6 @@
 import type { Difficulty, EnemyKind, EnemySpec, MapSpec, TileKind, TowerKind, TowerSpec, WaveSpec } from "@/game/types"
 
-export const GRID_W = 10
+export const GRID_W = 12
 export const GRID_H = 5
 export const LEVEL_COUNT = 8
 export const WAVES_PER_LEVEL = 8

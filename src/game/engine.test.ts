@@ -50,7 +50,7 @@ describe("engine", () => {
       const w = getWaveSpec(difficulty, 0, i)
       expect(w.entries.length).toBeGreaterThan(0)
     }
-    expect(GRID_W).toBe(10)
+    expect(GRID_W).toBe(12)
     expect(GRID_H).toBe(5)
   })
 
