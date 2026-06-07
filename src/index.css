@@ -19,8 +19,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html,
 body {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
   background: #0b0e0a;
+  overscroll-behavior: none;
 }
 
 @layer utilities {

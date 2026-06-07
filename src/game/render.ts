@@ -6,6 +6,8 @@ type RenderState = {
   difficulty: Difficulty
   levelIndex: number
   waveIndex: number
+  baseHp: number
+  baseHpMax: number
   tileSize: number
   selectedTile: TilePos | null
   buildKind: TowerKind | null
@@ -110,13 +112,13 @@ export function renderBattlefield(args: {
     ctx.restore()
   }
 
-  drawGrid({ ctx, runtime, tileSize, dpr })
+  drawGrid({ ctx, runtime, tileSize, dpr, baseHp: state.baseHp, baseHpMax: state.baseHpMax })
   drawEntities({ ctx, runtime, tileSize, difficulty: state.difficulty, levelIndex: state.levelIndex, waveIndex: state.waveIndex })
   drawSelection({ ctx, runtime, tileSize, selectedTile: state.selectedTile, buildKind: state.buildKind })
 }
 
-function drawGrid(args: { ctx: CanvasRenderingContext2D; runtime: GameRuntime; tileSize: number; dpr: number }) {
-  const { ctx, runtime, tileSize, dpr } = args
+function drawGrid(args: { ctx: CanvasRenderingContext2D; runtime: GameRuntime; tileSize: number; dpr: number; baseHp: number; baseHpMax: number }) {
+  const { ctx, runtime, tileSize, dpr, baseHp, baseHpMax } = args
   const w = GRID_W * tileSize
   const h = GRID_H * tileSize
 
@@ -138,11 +140,38 @@ function drawGrid(args: { ctx: CanvasRenderingContext2D; runtime: GameRuntime; t
           ctx.restore()
         }
       } else if (kind === "blocked") {
-        ctx.fillStyle = "rgba(10,10,10,0.6)"
+        ctx.fillStyle = "rgba(139,49,40,0.22)"
         ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize)
+        ctx.save()
+        ctx.globalAlpha = 0.6
+        ctx.strokeStyle = "rgba(242,229,190,0.32)"
+        ctx.lineWidth = Math.max(2, tileSize * 0.05)
+        ctx.beginPath()
+        ctx.moveTo(x * tileSize + tileSize * 0.22, y * tileSize + tileSize * 0.22)
+        ctx.lineTo(x * tileSize + tileSize * 0.78, y * tileSize + tileSize * 0.78)
+        ctx.moveTo(x * tileSize + tileSize * 0.78, y * tileSize + tileSize * 0.22)
+        ctx.lineTo(x * tileSize + tileSize * 0.22, y * tileSize + tileSize * 0.78)
+        ctx.stroke()
+        ctx.restore()
       }
     }
   }
+
+  ctx.save()
+  ctx.strokeStyle = "rgba(0,0,0,0.55)"
+  ctx.lineWidth = Math.max(6, tileSize * 0.22)
+  ctx.lineCap = "round"
+  ctx.lineJoin = "round"
+  ctx.beginPath()
+  for (let i = 0; i < runtime.map.path.length; i += 1) {
+    const p = runtime.map.path[i]
+    const cx = (p.x + 0.5) * tileSize
+    const cy = (p.y + 0.5) * tileSize
+    if (i === 0) ctx.moveTo(cx, cy)
+    else ctx.lineTo(cx, cy)
+  }
+  ctx.stroke()
+  ctx.restore()
 
   ctx.strokeStyle = "rgba(224,214,176,0.14)"
   ctx.lineWidth = 1
@@ -179,6 +208,27 @@ function drawGrid(args: { ctx: CanvasRenderingContext2D; runtime: GameRuntime; t
     ctx.fillStyle = "rgba(242,229,190,0.85)"
     ctx.fillRect(base.x * tileSize + 9, base.y * tileSize + 9, tileSize - 18, tileSize - 18)
   }
+
+  const pct = baseHpMax > 0 ? baseHp / baseHpMax : 0
+  const bg = pct > 0.67 ? "rgba(34,197,94,0.95)" : pct > 0.33 ? "rgba(250,204,21,0.95)" : "rgba(220,38,38,0.95)"
+  const badgeW = Math.max(26, tileSize * 0.42)
+  const badgeH = Math.max(18, tileSize * 0.26)
+  const badgeX = base.x * tileSize + tileSize - badgeW - 5
+  const badgeY = base.y * tileSize + 5
+  ctx.save()
+  ctx.fillStyle = bg
+  ctx.strokeStyle = "rgba(0,0,0,0.25)"
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.roundRect(badgeX, badgeY, badgeW, badgeH, badgeH * 0.35)
+  ctx.fill()
+  ctx.stroke()
+  ctx.fillStyle = "rgba(0,0,0,0.85)"
+  ctx.font = `${Math.round(tileSize * 0.18)}px ui-sans-serif, system-ui`
+  ctx.textAlign = "center"
+  ctx.textBaseline = "middle"
+  ctx.fillText(String(Math.max(0, Math.round(baseHp))), badgeX + badgeW / 2, badgeY + badgeH / 2 + 0.5)
+  ctx.restore()
 
   ctx.restore()
 }

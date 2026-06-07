@@ -25,6 +25,8 @@ type GameStore = {
   levelIndex: number
   waveIndex: number
   waveState: WaveState
+  waveAutoStartAt: number | null
+  waveAutoStartWaveIndex: number | null
   speed: 1 | 2
   supply: number
   baseHp: number
@@ -52,6 +54,7 @@ type GameStore = {
   togglePause: () => void
   setSpeed: (speed: 1 | 2) => void
   setBuildKind: (kind: TowerKind | null) => void
+  clearWaveAutoStart: () => void
   selectTile: (tile: TilePos) => void
   upgradeSelected: () => void
   sellSelected: () => void
@@ -68,6 +71,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   levelIndex: 0,
   waveIndex: 0,
   waveState: "build",
+  waveAutoStartAt: null,
+  waveAutoStartWaveIndex: null,
   speed: 1,
   supply: 0,
   baseHp: 0,
@@ -98,6 +103,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       levelIndex: 0,
       waveIndex: 0,
       waveState: "build",
+      waveAutoStartAt: null,
+      waveAutoStartWaveIndex: null,
       speed: difficulty === "veteran" ? 1 : 1,
       supply: getStartSupply(difficulty),
       baseHp: getStartBaseHp(difficulty),
@@ -128,6 +135,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       levelIndex: 0,
       waveIndex: 0,
       waveState: "build",
+      waveAutoStartAt: null,
+      waveAutoStartWaveIndex: null,
       supply: 0,
       baseHp: 0,
       speed: 1,
@@ -183,11 +192,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (isWaveDone(s.runtime)) {
       const lastWaveInLevel = s.waveIndex >= WAVES_PER_LEVEL - 1
       if (!lastWaveInLevel) {
+        const nextWaveIndex = s.waveIndex + 1
         set({
-          waveIndex: s.waveIndex + 1,
+          waveIndex: nextWaveIndex,
           waveState: "build",
           buildKind: null,
           selectedTowerId: null,
+          waveAutoStartAt: Date.now() + 3000,
+          waveAutoStartWaveIndex: nextWaveIndex,
         })
         return
       }
@@ -237,7 +249,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const total = getTotalWaves(s.difficulty, s.levelIndex)
     if (s.waveIndex >= total) return
     startWave(s.runtime, getWaveSpec(s.difficulty, s.levelIndex, s.waveIndex))
-    set({ waveState: "combat", buildKind: null, selectedTowerId: null })
+    set({
+      waveState: "combat",
+      buildKind: null,
+      selectedTowerId: null,
+      waveAutoStartAt: null,
+      waveAutoStartWaveIndex: null,
+    })
   },
 
   togglePause: () => {
@@ -254,6 +272,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   setBuildKind: (kind) => set({ buildKind: kind }),
+
+  clearWaveAutoStart: () => set({ waveAutoStartAt: null, waveAutoStartWaveIndex: null }),
 
   selectTile: (tile) => {
     const s = get()
@@ -336,6 +356,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       levelIndex: nextLevel,
       waveIndex: 0,
       waveState: "build",
+      waveAutoStartAt: null,
+      waveAutoStartWaveIndex: null,
       supply: getStartSupply(s.difficulty),
       buildKind: null,
       selectedTile: null,

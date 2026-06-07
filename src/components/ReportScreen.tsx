@@ -23,14 +23,14 @@ export default function ReportScreen() {
   const Icon = header.icon
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-10">
-      <div className="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-black/25 p-8 shadow-[0_18px_60px_rgba(0,0,0,0.55)]">
+    <div className="mx-auto flex h-full w-full max-w-4xl flex-col justify-center gap-5 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
+      <div className="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-black/25 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.55)] sm:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(242,229,190,0.14),transparent_55%),radial-gradient(circle_at_90%_30%,rgba(139,49,40,0.16),transparent_60%),radial-gradient(circle_at_40%_120%,rgba(255,206,124,0.12),transparent_55%)]" />
         <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0">
             <div className="text-xs uppercase tracking-[0.38em] text-[color:var(--paper)]/70">After Action Report</div>
-            <h1 className="mt-2 font-display text-4xl text-[color:var(--paper)] md:text-5xl">{header.title}</h1>
-            <p className="mt-2 text-sm text-[color:var(--paper)]/80">{header.sub}</p>
+            <h1 className="mt-2 font-display text-3xl text-[color:var(--paper)] sm:text-4xl md:text-5xl">{header.title}</h1>
+            <p className="mt-2 text-xs text-[color:var(--paper)]/80 sm:text-sm">{header.sub}</p>
           </div>
           <div className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[color:var(--brass)] text-black shadow-[0_10px_0_rgba(0,0,0,0.35)]">
             <Icon className="h-8 w-8" />
@@ -39,7 +39,7 @@ export default function ReportScreen() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-[color:var(--line)] bg-black/20 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
+        <div className="rounded-2xl border border-[color:var(--line)] bg-black/20 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.45)] sm:p-5">
           <div className="text-xs uppercase tracking-[0.22em] text-[color:var(--paper)]/60">战况统计</div>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <Stat label="已推进波次" value={String(result === "victory" ? waveIndex + 1 : Math.max(0, waveIndex + 1))} />
@@ -49,7 +49,7 @@ export default function ReportScreen() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[color:var(--line)] bg-black/20 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
+        <div className="rounded-2xl border border-[color:var(--line)] bg-black/20 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.45)] sm:p-5">
           <div className="text-xs uppercase tracking-[0.22em] text-[color:var(--paper)]/60">资源记录</div>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <Stat label="难度" value={difficultyLabel(difficulty)} />
@@ -82,7 +82,7 @@ function Stat({ label, value, wide }: { label: string; value: string; wide?: boo
       ].join(" ")}
     >
       <div className="text-xs uppercase tracking-[0.22em] text-[color:var(--paper)]/60">{label}</div>
-      <div className="mt-1 text-lg font-semibold text-[color:var(--paper)]">{value}</div>
+      <div className="mt-1 text-base font-semibold text-[color:var(--paper)] sm:text-lg">{value}</div>
     </div>
   )
 }
@@ -92,4 +92,3 @@ function difficultyLabel(d: string) {
   if (d === "veteran") return "老兵"
   return "标准"
 }
-

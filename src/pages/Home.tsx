@@ -9,7 +9,13 @@ export default function Home() {
   const phase = useGameStore((s) => s.phase)
   return (
     <MobileLandscape>
-      <div className="min-h-screen bg-app text-[color:var(--paper)]">
+      <div
+        className={[
+          "bg-app text-[color:var(--paper)]",
+          "h-[100dvh] w-full",
+          "overflow-hidden",
+        ].join(" ")}
+      >
         <div className="pointer-events-none fixed inset-0 -z-10 bg-appTexture" />
         {phase === "menu" ? (
           <MenuScreen />

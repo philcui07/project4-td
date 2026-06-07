@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { buildWavePlan, createRuntime, getWaveSpec, placeTower, startWave, stepRuntime } from "@/game/engine"
-import { getMap, GRID_H, GRID_W } from "@/game/specs"
+import { getMap, GRID_H, GRID_W, LEVEL_COUNT } from "@/game/specs"
 
 describe("engine", () => {
   it("buildWavePlan expands entries into a timed plan", () => {
@@ -52,5 +52,30 @@ describe("engine", () => {
     }
     expect(GRID_W).toBe(10)
     expect(GRID_H).toBe(5)
+  })
+
+  it("maps have continuous paths and no extra road tiles", () => {
+    for (let levelIndex = 0; levelIndex < LEVEL_COUNT; levelIndex += 1) {
+      const map = getMap(levelIndex)
+      expect(map.path.length).toBeGreaterThan(1)
+
+      for (let i = 1; i < map.path.length; i += 1) {
+        const a = map.path[i - 1]
+        const b = map.path[i]
+        const manhattan = Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
+        expect(manhattan).toBe(1)
+      }
+
+      const pathSet = new Set(map.path.map((p) => `${p.x},${p.y}`))
+      let roadCount = 0
+      for (let y = 0; y < map.tiles.length; y += 1) {
+        for (let x = 0; x < map.tiles[y].length; x += 1) {
+          if (map.tiles[y][x] !== "road") continue
+          roadCount += 1
+          expect(pathSet.has(`${x},${y}`)).toBe(true)
+        }
+      }
+      expect(roadCount).toBe(pathSet.size)
+    }
   })
 })
