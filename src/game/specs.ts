@@ -3,7 +3,7 @@ import type { Difficulty, EnemyKind, EnemySpec, MapSpec, TileKind, TowerKind, To
 export const GRID_W = 12
 export const GRID_H = 5
 export const LEVEL_COUNT = 8
-export const WAVES_PER_LEVEL = 8
+export const WAVES_PER_LEVEL = 6
 
 function makeTiles(): TileKind[][] {
   return Array.from({ length: GRID_H }, () => Array.from({ length: GRID_W }, () => "buildable" as const))
@@ -43,6 +43,10 @@ const MAPS: MapSpec[] = [
       { x: 8, y: 3 },
       { x: 8, y: 4 },
       { x: 9, y: 4 },
+      { x: 10, y: 4 },
+      { x: 11, y: 4 },
+      { x: 11, y: 3 },
+      { x: 11, y: 2 },
     ],
     blocked: [
       { x: 0, y: 0 },
@@ -68,6 +72,12 @@ const MAPS: MapSpec[] = [
       { x: 8, y: 3 },
       { x: 8, y: 2 },
       { x: 9, y: 2 },
+      { x: 9, y: 3 },
+      { x: 9, y: 4 },
+      { x: 10, y: 4 },
+      { x: 11, y: 4 },
+      { x: 11, y: 3 },
+      { x: 11, y: 2 },
     ],
     blocked: [
       { x: 0, y: 4 },
@@ -96,6 +106,10 @@ const MAPS: MapSpec[] = [
       { x: 8, y: 1 },
       { x: 8, y: 2 },
       { x: 9, y: 2 },
+      { x: 10, y: 2 },
+      { x: 11, y: 2 },
+      { x: 11, y: 1 },
+      { x: 11, y: 0 },
     ],
     blocked: [
       { x: 4, y: 4 },
@@ -121,6 +135,9 @@ const MAPS: MapSpec[] = [
       { x: 7, y: 2 },
       { x: 8, y: 2 },
       { x: 9, y: 2 },
+      { x: 10, y: 2 },
+      { x: 11, y: 2 },
+      { x: 11, y: 1 },
     ],
     blocked: [
       { x: 0, y: 4 },
@@ -149,6 +166,10 @@ const MAPS: MapSpec[] = [
       { x: 7, y: 4 },
       { x: 8, y: 4 },
       { x: 9, y: 4 },
+      { x: 10, y: 4 },
+      { x: 11, y: 4 },
+      { x: 11, y: 3 },
+      { x: 11, y: 2 },
     ],
     blocked: [
       { x: 9, y: 0 },
@@ -174,6 +195,9 @@ const MAPS: MapSpec[] = [
       { x: 7, y: 3 },
       { x: 8, y: 3 },
       { x: 9, y: 3 },
+      { x: 10, y: 3 },
+      { x: 11, y: 3 },
+      { x: 11, y: 4 },
     ],
     blocked: [
       { x: 9, y: 0 },
@@ -200,6 +224,10 @@ const MAPS: MapSpec[] = [
       { x: 8, y: 3 },
       { x: 8, y: 2 },
       { x: 9, y: 2 },
+      { x: 10, y: 2 },
+      { x: 11, y: 2 },
+      { x: 11, y: 3 },
+      { x: 11, y: 4 },
     ],
     blocked: [
       { x: 9, y: 4 },
@@ -226,6 +254,12 @@ const MAPS: MapSpec[] = [
       { x: 7, y: 4 },
       { x: 8, y: 4 },
       { x: 9, y: 4 },
+      { x: 10, y: 4 },
+      { x: 11, y: 4 },
+      { x: 11, y: 3 },
+      { x: 10, y: 3 },
+      { x: 10, y: 2 },
+      { x: 11, y: 2 },
     ],
     blocked: [
       { x: 0, y: 0 },
@@ -325,11 +359,9 @@ export function getEnemySpec(kind: EnemyKind, difficulty: Difficulty, levelIndex
   const globalSpeedMul = 1.2
 
   // 难度系数
-  // 老兵模式：只提升敌人 HP（不额外改变移速/奖励）。
-  const veteranHardMul = difficulty === "veteran" ? 2 : 1
-  const hpMul = (difficulty === "easy" ? 0.9 : difficulty === "veteran" ? 1.25 : 1) * veteranHardMul
-  const speedMul = difficulty === "easy" ? 0.95 : 1
-  const rewardMul = difficulty === "easy" ? 0.95 : 1
+  const hpMul = difficulty === "easy" ? 0.9 : difficulty === "veteran" ? 1.05 : 1
+  const speedMul = difficulty === "easy" ? 0.95 : difficulty === "veteran" ? 0.98 : 1
+  const rewardMul = difficulty === "easy" ? 0.95 : difficulty === "veteran" ? 1.05 : 1
   const levelMul = 1 + Math.max(0, Math.min(LEVEL_COUNT - 1, levelIndex)) * 0.12
   const waveMul = 1 + Math.max(0, Math.min(WAVES_PER_LEVEL - 1, waveIndex)) * 0.05
   return {
@@ -347,13 +379,12 @@ export function getStartSupply(difficulty: Difficulty) {
 }
 
 export function getStartBaseHp(difficulty: Difficulty) {
-  return difficulty === "easy" ? 18 : difficulty === "veteran" ? 12 : 14
+  return difficulty === "easy" ? 20 : difficulty === "veteran" ? 10 : 14
 }
 
 export function getWaves(difficulty: Difficulty, levelIndex: number): WaveSpec[] {
-  // 老兵模式：只提升敌人数量（不额外改变生成间隔）。
-  const density = difficulty === "easy" ? 0.9 : difficulty === "veteran" ? 1.12 : 1
-  const countMul = difficulty === "veteran" ? 2 : 1
+  const density = difficulty === "easy" ? 0.9 : difficulty === "veteran" ? 1 : 1
+  const countMul = difficulty === "veteran" ? 1.15 : 1
   const clamp = (n: number) => Math.max(0.32, n)
   const levelStage = 1 + Math.max(0, Math.min(LEVEL_COUNT - 1, levelIndex)) * 0.16
 
@@ -363,9 +394,7 @@ export function getWaves(difficulty: Difficulty, levelIndex: number): WaveSpec[]
     { entries: [{ kind: "infantry", count: 9, interval: 0.52 }, { kind: "car", count: 2, interval: 1.2 }] },
     { entries: [{ kind: "car", count: 5, interval: 1.05 }, { kind: "infantry", count: 7, interval: 0.5 }] },
     { entries: [{ kind: "tank", count: 1, interval: 1.9 }, { kind: "car", count: 5, interval: 1.0 }] },
-    { entries: [{ kind: "infantry", count: 12, interval: 0.48 }, { kind: "car", count: 6, interval: 0.92 }] },
-    { entries: [{ kind: "tank", count: 2, interval: 1.8 }, { kind: "infantry", count: 10, interval: 0.46 }] },
-    { entries: [{ kind: "boss", count: 1, interval: 2.6 }, { kind: "tank", count: 2, interval: 1.75 }, { kind: "car", count: 10, interval: 0.86 }] },
+    { entries: [{ kind: "boss", count: 1, interval: 2.6 }, { kind: "tank", count: 1, interval: 1.75 }, { kind: "car", count: 8, interval: 0.9 }] },
   ]
 
   return base.map((w, idx) => {

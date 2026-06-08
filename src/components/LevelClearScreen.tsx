@@ -1,10 +1,11 @@
 import Button from "@/components/ui/Button"
 import { useGameStore } from "@/store/gameStore"
-import { ArrowRight, CheckCircle2, Undo2 } from "lucide-react"
+import { ArrowRight, CheckCircle2, RotateCcw, Undo2 } from "lucide-react"
 
 export default function LevelClearScreen() {
   const report = useGameStore((s) => s.levelClearReport)
   const confirmLevelClear = useGameStore((s) => s.confirmLevelClear)
+  const restartLevel = useGameStore((s) => s.restartLevel)
   const returnToMenu = useGameStore((s) => s.returnToMenu)
 
   if (!report) {
@@ -70,6 +71,10 @@ export default function LevelClearScreen() {
         <Button onClick={confirmLevelClear} className="flex-1">
           <ArrowRight className="h-4 w-4" />
           进入下一关
+        </Button>
+        <Button variant="ghost" onClick={restartLevel} className="flex-1">
+          <RotateCcw className="h-4 w-4" />
+          重玩本关
         </Button>
         <Button variant="ghost" onClick={returnToMenu} className="flex-1">
           <Undo2 className="h-4 w-4" />

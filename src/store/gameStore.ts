@@ -48,6 +48,7 @@ type GameStore = {
   buildKind: TowerKind | null
 
   startNewGame: (difficulty: Difficulty) => void
+  restartLevel: () => void
   returnToMenu: () => void
   tick: (dt: number) => void
   nextWave: () => void
@@ -121,6 +122,32 @@ export const useGameStore = create<GameStore>((set, get) => ({
       selectedTile: null,
       selectedTowerId: null,
       buildKind: null,
+    })
+  },
+
+  restartLevel: () => {
+    const s = get()
+    if (s.phase === "menu") return
+    const runtime = createRuntime(getMap(s.levelIndex))
+    set({
+      phase: "playing",
+      result: null,
+      runtime,
+      waveIndex: 0,
+      waveState: "build",
+      waveAutoStartAt: null,
+      waveAutoStartWaveIndex: null,
+      supply: getStartSupply(s.difficulty),
+      baseHp: getStartBaseHp(s.difficulty),
+      selectedTile: null,
+      selectedTowerId: null,
+      buildKind: null,
+      towersVersion: s.towersVersion + 1,
+      kills: s.levelStartKills,
+      leaks: s.levelStartLeaks,
+      towersBuilt: s.levelStartTowersBuilt,
+      moneySpent: s.levelStartMoneySpent,
+      levelClearReport: null,
     })
   },
 
@@ -267,8 +294,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   setSpeed: (speed) => {
     const s = get()
-    const clamped: 1 | 2 = s.difficulty === "veteran" ? 1 : speed
-    set({ speed: clamped })
+    void s
+    set({ speed })
   },
 
   setBuildKind: (kind) => set({ buildKind: kind }),
@@ -359,6 +386,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       waveAutoStartAt: null,
       waveAutoStartWaveIndex: null,
       supply: getStartSupply(s.difficulty),
+      baseHp: getStartBaseHp(s.difficulty),
       buildKind: null,
       selectedTile: null,
       selectedTowerId: null,

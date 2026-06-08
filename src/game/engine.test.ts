@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { buildWavePlan, createRuntime, getWaveSpec, placeTower, startWave, stepRuntime } from "@/game/engine"
-import { getMap, GRID_H, GRID_W, LEVEL_COUNT } from "@/game/specs"
+import { getMap, GRID_H, GRID_W, LEVEL_COUNT, WAVES_PER_LEVEL } from "@/game/specs"
 
 describe("engine", () => {
   it("buildWavePlan expands entries into a timed plan", () => {
@@ -46,7 +46,7 @@ describe("engine", () => {
 
   it("wave specs exist for all waves", () => {
     const difficulty = "normal" as const
-    for (let i = 0; i < 8; i += 1) {
+    for (let i = 0; i < WAVES_PER_LEVEL; i += 1) {
       const w = getWaveSpec(difficulty, 0, i)
       expect(w.entries.length).toBeGreaterThan(0)
     }

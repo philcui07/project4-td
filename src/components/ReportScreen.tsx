@@ -12,7 +12,7 @@ export default function ReportScreen() {
   const towersBuilt = useGameStore((s) => s.towersBuilt)
   const moneySpent = useGameStore((s) => s.moneySpent)
 
-  const startNewGame = useGameStore((s) => s.startNewGame)
+  const restartLevel = useGameStore((s) => s.restartLevel)
   const returnToMenu = useGameStore((s) => s.returnToMenu)
 
   const header = useMemo(() => {
@@ -60,9 +60,9 @@ export default function ReportScreen() {
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row">
-        <Button onClick={() => startNewGame(difficulty)} className="flex-1">
+        <Button onClick={restartLevel} className="flex-1">
           <RotateCcw className="h-4 w-4" />
-          再来一局（同难度）
+          重玩本关
         </Button>
         <Button variant="ghost" onClick={returnToMenu} className="flex-1">
           <Undo2 className="h-4 w-4" />

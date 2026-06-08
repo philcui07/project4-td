@@ -159,7 +159,6 @@ export default function GameScreen() {
           <button
             type="button"
             onClick={() => setSpeed(speed === 1 ? 2 : 1)}
-            disabled={difficulty === "veteran"}
             className="inline-flex h-9 items-center gap-1 rounded-xl bg-black/20 px-2 text-[10px] font-semibold leading-none text-[color:var(--paper)] ring-1 ring-[color:var(--line)] disabled:opacity-50 sm:h-10 sm:gap-2 sm:px-3 sm:text-xs"
           >
             <Gauge className="h-4 w-4" />
